@@ -1,0 +1,65 @@
+package com.ESNLEADER.service;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ESNLEADER.model.Entreprise;
+import com.ESNLEADER.repositories.EntrepriseRepository;
+
+@Service
+@Transactional
+public class EntrepriseServiceImp implements EntrepriseService {
+	@Autowired
+	private EntrepriseRepository repo;
+	
+	
+	@Override
+	public Entreprise Ajouter(Entreprise entreprise) {
+		repo.save(entreprise);
+		return entreprise;
+	}
+
+	@Override
+	public Entreprise Modifier(Entreprise entreprise) {
+		List<Entreprise> e1 = new ArrayList<Entreprise>();
+		e1 = listAll();
+		for (Entreprise entreprise2 : e1) {
+			if(entreprise.getNom().equals(entreprise2.getNom())) {
+				repo.save(entreprise);
+			}
+		}
+		return entreprise;
+	}
+
+
+	@Override
+	public List<Entreprise> listAll() {
+		List<Entreprise> entreprises = new ArrayList<>();
+		 repo.findAll().forEach(entreprises::add);
+		 return entreprises;
+	}
+
+	
+	@Override
+	public void Supprimer(String nom) {
+		List<Entreprise> entreprises = new ArrayList<>();
+		repo.findAll().forEach(entreprises::add);
+		for (Entreprise entreprise : entreprises) {
+			if(entreprise.getNom().equals(nom)) {
+				repo.delete(entreprise);
+			}
+		}	
+	}
+
+	@Override
+	public Entreprise getById(Long id) {
+		return repo.findById(id).orElse(null);
+	}
+
+}
